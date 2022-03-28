@@ -1,5 +1,5 @@
-### R Versi髇 3.3.1 (Bug in Your Hair)
-### Funci髇 para descargar datos del BCCR
+### R Versi贸n 3.3.1 (Bug in Your Hair)
+### Funci贸n para descargar datos del BCCR
 #########################################
 
 DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
@@ -9,12 +9,12 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
         if (fin == "hoy") fin = strftime(Sys.time(),"%d/%m/%Y")
 
 
-        # Revisar validez de par醡etros
+        # Revisar validez de par谩metros
         if (!InputValid(indicador, inicio, fin, subniveles)) {
-                stop("Imposible realizar solicitud con par醡etros ingresados.")
+                stop("Imposible realizar solicitud con par谩metros ingresados.")
         }
 
-        url <- paste("http://indicadoreseconomicos.bccr.fi.cr/",
+        url <- paste("https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx",
         "indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx",
         sep = "")
         baseSource <- paste(url,"/ObtenerIndicadoresEconomicosXML",
@@ -39,7 +39,7 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                         XML::xmlSApply(function(x) XML::xmlSApply(x,
                         XML::xmlValue))
 
-                # Corregir series para las que el sistema retorna valores vac韔s
+                # Corregir series para las que el sistema retorna valores vac铆os
                 # para determinadas fechas (v.gr. fines de semana)
                 if (class(temp) == "list") {
                         temp <- sapply(temp,
@@ -49,7 +49,7 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                 #Formato de datos
                 temp <- tibble::as_tibble(t(temp))
                 colnames(temp) <-  c("Indicador", "Fecha", "Valor")
-                #Elimina advertencia por generaci髇 de NA's
+                #Elimina advertencia por generaci贸n de NA's
                 suppressWarnings(temp$Valor <-
                                          as.numeric(temp$Valor))
                 temp$Fecha <- as.Date(temp$Fecha, "%Y-%m-%d")
@@ -66,18 +66,18 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
         }
 
         elapsed <- Sys.time() - time
-        message(paste0("Duraci髇 de descarga: ", format(elapsed, digits = 2),
+        message(paste0("Duraci贸n de descarga: ", format(elapsed, digits = 2),
                       ".\nResultado: ", NROW(final)," observaciones."))
         return(final)
 
 }
 
-#Funci髇 secundaria para controlar que los par醡etros sean v醠idos
+#Funci贸n secundaria para controlar que los par谩metros sean v谩lidos
 InputValid <- function(indicador, inicio, fin, subniveles){
 
         is.ok <- TRUE
         date_err <- paste("Valor de fecha incorrecto.\n",
-                         "  Intentar de nuevo con una fecha v醠ida en formato ",
+                         "  Intentar de nuevo con una fecha v谩lida en formato ",
                          "\"dd/mm/aaaa\" (no olvidar comillas).", sep =  "")
 
         check_date <- try(as.Date(inicio, format = "%d/%m/%Y"))
@@ -107,7 +107,7 @@ InputValid <- function(indicador, inicio, fin, subniveles){
         }
 
         if (counter == NROW(indicador)) {
-                message(" --Ning鷑 indicador v醠ido.--")
+                message(" --Ning煤n indicador v谩lido.--")
                 is.ok <- FALSE
         }
 
